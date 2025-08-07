@@ -12,6 +12,22 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 
 const SUPPORTED_CHAINS = [base, optimism, zircuit, arbitrum, mainnet, baseSepolia, optimismSepolia, arbitrumSepolia, sepolia]
 
+// Example request USDC -> USDT swap in Base Mainnet
+const QUOTE_REQUEST = {
+  srcChainId: 8453, // Base mainnet
+  srcToken: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // USDC
+  srcAmountWei: '250000',
+  destToken: '0xfde4c96c8593536e31f229ea8f37b2ada2699bb2', // USDT
+  destChainId: 8453, // Same chain
+  slippageBps: 100,
+  // userAccount: account.address, // Set in executeTrade
+  // destReceiver: account.address, // Set in executeTrade, can be different to userAccount
+
+  // Optional fee parameters omitted
+  // feeRecipient: account.address,
+  // feeBps: '0',
+}
+
 const getPublicClient = (chainId) => {
   const chain = SUPPORTED_CHAINS.find((c) => c.id === chainId)
   if (!chain) {
@@ -149,17 +165,9 @@ const executeTrade = async () => {
     console.log('Trading with wallet address:', account.address)
 
     const quoteRequest = {
-      srcChainId: 8453, // Base mainnet
-      srcToken: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // USDC
-      srcAmountWei: '250000',
-      destToken: '0xfde4c96c8593536e31f229ea8f37b2ada2699bb2', // USDT
-      destChainId: 8453, // Same chain
-      slippageBps: 100,
+      ...QUOTE_REQUEST,
       userAccount: account.address, // User's wallet
       destReceiver: account.address, // Same as user
-      // Optional fee parameters omitted
-      // feeRecipient: account.address,
-      // feeBps: '0',
     }
 
     // Step 1: Get trade estimate
