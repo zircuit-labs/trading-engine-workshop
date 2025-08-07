@@ -1,0 +1,23 @@
+{
+  "name": "trading-engine-workshop",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zircuit-labs/trading-engine-workshop.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zircuit-labs/trading-engine-workshop/issues"
+  },
+  "homepage": "https://github.com/zircuit-labs/trading-engine-workshop#readme",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "viem": "^2.33.2"
+  }
+}
