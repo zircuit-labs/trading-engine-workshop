@@ -14,11 +14,11 @@ const SUPPORTED_CHAINS = [base, optimism, zircuit, arbitrum, mainnet, baseSepoli
 
 // Example request USDC -> USDT swap in Base Mainnet
 const QUOTE_REQUEST = {
-  srcChainId: 8453, // Base mainnet
+  srcChainId: 8453, // Base Mainnet
   srcToken: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913', // USDC
-  srcAmountWei: '250000',
-  destToken: '0xfde4c96c8593536e31f229ea8f37b2ada2699bb2', // USDT
-  destChainId: 8453, // Same chain
+  srcAmountWei: '100000000', // 100 USDC
+  destToken: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // ETH
+  destChainId: 48900, // Zircuit Mainnet
   slippageBps: 100,
   // userAccount: account.address, // Set in executeTrade
   // destReceiver: account.address, // Set in executeTrade, can be different to userAccount
@@ -66,9 +66,12 @@ async function getTradeEstimate(quoteRequest) {
     // Extract important data for next steps
     const { trade, tx } = response.data
 
+    console.log('Trade:', trade)
+
     return {
       tradeId: trade.tradeId,
-      expectedAmount: trade.destTokenAmountWei,
+      expectedAmount: trade.destTokenAmount,
+      minExpectedAmount: trade.destTokenMinAmount,
       txData: tx,
       fees: trade.fees,
     }
@@ -175,6 +178,10 @@ const executeTrade = async () => {
     const estimate = await getTradeEstimate(quoteRequest)
 
     console.log('Fees:', estimate.fees)
+    console.log('Expected amount:', estimate.expectedAmount);
+    console.log('Min expected amount:', estimate.minExpectedAmount)
+    
+    console.log('In production, remember to check the min expected amount before executing/signing the trade!')
 
     // Step 2: Check if token approval is needed
     console.log('Step 2: Checking token approval...')
