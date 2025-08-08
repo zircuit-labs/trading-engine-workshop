@@ -54,6 +54,25 @@ const isNativeToken = (tokenAddress) => {
   )
 }
 
+async function waitUntilTradeIsCompleted(txHash) {
+  const response = await getTradeStatus(txHash)
+  if (response.status === 'SUCCESS' || response.status === 'FAILED' || response.status === 'REFUNDED' || response.status === 'UNKNOWN') {
+    return response
+  }
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  return waitUntilTradeIsCompleted(txHash)
+}
+
+async function getTradeStatus(txHash) {
+  const response = await apiRequest(`/order/status?txHash=${txHash}`, {
+    method: 'GET',
+  })
+
+  console.log('Trade status:', response.status)
+
+  return response
+}
+
 async function getTradeEstimate(quoteRequest) {
   try {
     const response = await apiRequest('/order/estimate', {
@@ -208,10 +227,14 @@ const executeTrade = async () => {
     console.log('✅ Trade executed successfully!')
     console.log('Transaction hash:', tx)
 
+    const tradeStatus = await waitUntilTradeIsCompleted(tx)
+    console.log('Final Trade status:', tradeStatus.status)
+
     return {
       success: true,
       txHash: tx,
       tradeId: estimate.tradeId,
+      tradeStatus: tradeStatus,
     }
   } catch (error) {
     console.error('❌ Backend trade execution failed:', error)
